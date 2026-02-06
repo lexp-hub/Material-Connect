@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Material Connect</title>
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+
+    <!-- CSS separato -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <!-- SCHERMATA INIZIALE -->
+    <div id="menu-screen" class="screen">
+        <div class="mt-8 text-center">
+            <h1 id="wave-title" class="wave-text text-5xl md:text-7xl font-black tracking-tighter text-[#6750A4] mb-1"></h1>
+            <h1 class="text-5xl md:text-7xl font-black tracking-tighter text-[#6750A4] opacity-20">Connect</h1>
+        </div>
+        
+        <div class="text-center">
+            <div class="best-score-badge mb-2">MIGLIOR PUNTEGGIO</div>
+            <div id="best-score-val" class="text-5xl font-black">0</div>
+        </div>
+
+        <div class="mb-10">
+            <button onclick="goToGame()" class="md-button">INIZIA</button>
+        </div>
+    </div>
+
+    <!-- SCHERMATA DI GIOCO -->
+    <div id="game-screen" class="screen hidden">
+        <div class="w-full flex flex-col items-center mt-2">
+            <div class="text-[10px] font-bold uppercase tracking-widest opacity-30">Punteggio</div>
+            <div id="score">0</div>
+        </div>
+        
+        <div class="game-card-wrapper">
+            <div class="game-card" id="card-body">
+                <canvas id="connection-canvas"></canvas>
+                <div class="grid-container" id="game-grid"></div>
+            </div>
+        </div>
+
+        <div class="mb-6">
+            <button onclick="goToMenu()" class="text-[#6750A4] font-bold opacity-40 hover:opacity-100 transition-opacity">
+                MENU PRINCIPALE
+            </button>
+        </div>
+    </div>
+
+    <!-- OVERLAY GAME OVER -->
+    <div id="game-over-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-md hidden items-center justify-center z-50 p-6">
+        <div class="bg-white rounded-[40px] p-8 w-full max-w-sm text-center shadow-2xl">
+            <div id="trophy-icon" class="text-6xl mb-4">🏆</div>
+            <h2 id="game-over-title" class="text-2xl font-black mb-1">Fine Partita</h2>
+            <p class="text-gray-500 mb-8" id="final-score-text"></p>
+            <button onclick="resetGame()" class="md-button w-full mb-3">RIPROVA</button>
+            <button onclick="goToMenu()" class="text-gray-400 font-bold py-2">CHIUDI</button>
+        </div>
+    </div>
+
+    <!-- JS separato -->
+    <script src="js/game.js"></script>
+</body>
+</html>
