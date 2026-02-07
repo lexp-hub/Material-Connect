@@ -1,1 +1,1 @@
-Youu can check it out on https://material-connect.page.gd/?i=1 but the server aren't any good.
+You can check it out on https://material-connect.page.gd/?i=1 but the server aren't any good.
