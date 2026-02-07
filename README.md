@@ -1,5 +1,5 @@
 Material Connect:
-A minimalist puzzle-style game based on Google's Material Design aesthetic, where players aim to connect similar-numbered tiles to sum them up, with the objective of achieving a high score.
+A minimalist puzzle-style game based on Google's Material Design aesthetic, where players aim to connect similar-numbered tiles to sum them up, with the objective of achieving a high score, the language used is italian. (it's my first language)
 
 Features:
 Material 3 Interface: Clean and rounded with a rich color palette. (that i obviously copied from google lmao)
