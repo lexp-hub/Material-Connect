@@ -8,7 +8,7 @@ Integrated Radio: Integrated YouTube player to listen to music while playing. (p
 Responsive: Optimized for mobile and desktop (at least i tried lol)
 
 Installation:
-You can clone the repo: https://github.com/lexp-hub/Material-Connect
+You can clone the repo: git clone https://github.com/lexp-hub/Material-Connect.git
 or just check it out to material-connect.page.gd 
 even if the server aren't any good :(
 
