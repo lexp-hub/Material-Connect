@@ -4,481 +4,80 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Material Connect</title>
+    
+    <!-- PWA & SEO -->
+    <meta name="theme-color" content="#6750A4">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%236750A4'/%3E%3Cpath d='M50 130V50h25l15 30 15-30h25v80h-18V75l-22 45-22-45v55H50z' fill='white'/%3E%3C/svg%3E">
+
+    <!-- Styles -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --md-sys-color-primary: #6750A4;
-            --md-sys-color-on-primary: #FFFFFF;
-            --md-sys-color-surface: #FEF7FF;
-            --md-sys-color-surface-container: #F3EDF7;
-            --safe-area-top: env(safe-area-inset-top, 20px);
-            --safe-area-bottom: env(safe-area-inset-bottom, 20px);
-        }
-
-        body {
-            touch-action: none;
-            user-select: none;
-            -webkit-user-select: none;
-            overflow: hidden;
-            background-color: var(--md-sys-color-surface);
-            font-family: 'Roboto', sans-serif;
-            color: #1D1B20;
-            height: 100vh;
-            height: 100dvh;
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center; /* Centra il contenuto su schermi larghi */
-        }
-
-        .screen {
-            position: absolute;
-            inset: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: space-between;
-            transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1), transform 0.4s ease;
-            padding: calc(var(--safe-area-top) + 20px) 24px calc(var(--safe-area-bottom) + 20px) 24px;
-            box-sizing: border-box;
-            max-width: 600px; /* Limita la larghezza su desktop/tablet */
-            margin: 0 auto;
-        }
-
-        .screen.hidden {
-            opacity: 0;
-            pointer-events: none;
-            transform: scale(0.98);
-        }
-
-        @keyframes snakeWave {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-15px); }
-        }
-
-        .wave-text span {
-            display: inline-block;
-            animation: snakeWave 1.5s infinite ease-in-out;
-        }
-
-        /* Adattamento Dinamico Griglia */
-        .game-card-wrapper {
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-grow: 1;
-            padding: 10px;
-        }
-
-        .game-card {
-            background: var(--md-sys-color-surface-container);
-            border-radius: 32px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-            padding: 12px;
-            position: relative;
-            width: 100%;
-            /* La griglia scala in base alla larghezza o altezza disponibile */
-            max-width: min(90vw, 450px); 
-            max-height: min(70vh, 450px);
-        }
-
-        .grid-container {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: clamp(4px, 1.5vw, 12px);
-            width: 100%;
-            aspect-ratio: 1/1;
-        }
-
-        .cell {
-            aspect-ratio: 1/1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 900;
-            font-size: clamp(0.9rem, 4vw, 1.6rem);
-            border-radius: clamp(10px, 2.5vw, 20px);
-            color: white;
-            transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
-            z-index: 2;
-            cursor: pointer;
-        }
-
-        /* Effetto Hover solo su dispositivi con mouse */
-        @media (hover: hover) {
-            .cell:hover {
-                filter: brightness(1.1);
-                transform: scale(1.05);
-            }
-        }
-
-        .cell.selected {
-            transform: scale(0.85);
-            filter: brightness(1.2);
-            border-radius: 50%;
-        }
-
-        #connection-canvas {
-            position: absolute;
-            top: 12px;
-            left: 12px;
-            pointer-events: none;
-            z-index: 1;
-        }
-
-        .md-button {
-            background-color: var(--md-sys-color-primary);
-            color: var(--md-sys-color-on-primary);
-            padding: 16px 48px;
-            border-radius: 100px;
-            font-weight: 700;
-            font-size: 1.1rem;
-            box-shadow: 0 4px 12px rgba(103, 80, 164, 0.3);
-            transition: transform 0.2s, box-shadow 0.2s;
-            border: none;
-        }
-
-        .md-button:active {
-            transform: scale(0.95);
-        }
-
-        /* Palette Colori Ottimizzata */
-        .val-2 { background-color: #EADDFF; color: #21005D; }
-        .val-4 { background-color: #D0BCFF; color: #21005D; }
-        .val-8 { background-color: #B1A7FF; color: #000; }
-        .val-16 { background-color: #7C71FF; color: #FFF; }
-        .val-32 { background-color: #6750A4; color: #FFF; }
-        .val-64 { background-color: #4F378B; color: #FFF; }
-        .val-128 { background-color: #381E72; color: #FFF; }
-        .val-256 { background-color: #21005D; color: #FFF; }
-        .val-512 { background-color: #E31B1B; color: #FFF; }
-        .val-1024 { background-color: #B3261E; color: #FFF; }
-
-        #score {
-            font-size: clamp(3rem, 10vw, 5rem);
-            font-weight: 900;
-            color: #1D1B20;
-            line-height: 1;
-        }
-
-        .best-score-badge {
-            background: #E8DEF8;
-            padding: 8px 20px;
-            border-radius: 12px;
-            font-size: 0.8rem;
-            font-weight: 700;
-            color: #49454F;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <!-- SCHERMATA INIZIALE -->
-    <div id="menu-screen" class="screen">
-        <div class="mt-8 text-center">
-            <h1 id="wave-title" class="wave-text text-5xl md:text-7xl font-black tracking-tighter text-[#6750A4] mb-1"></h1>
-            <h1 class="text-5xl md:text-7xl font-black tracking-tighter text-[#6750A4] opacity-20">Connect</h1>
-        </div>
-        
-        <div class="text-center">
-            <div class="best-score-badge mb-2">MIGLIOR PUNTEGGIO</div>
-            <div id="best-score-val" class="text-5xl font-black">0</div>
-        </div>
+    <!-- Informazioni Utente (Debug/Firebase) -->
+    <div id="user-info">CARICAMENTO...</div>
+    
+    <!-- Overlay per la chiusura del pannello musica -->
+    <div id="music-overlay" onclick="closeMusicPanel()"></div>
 
-        <div class="mb-10">
-            <button onclick="goToGame()" class="md-button">INIZIA</button>
+    <!-- Pulsante Fluttuante Radio -->
+    <div class="music-btn" onclick="openMusicPanel()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
+    </div>
+
+    <!-- Pannello Radio (Bottom Sheet) -->
+    <div id="music-panel">
+        <div class="music-handle-area" onclick="closeMusicPanel()">
+            <div class="music-handle"></div>
+        </div>
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-xl font-bold text-gray-800">Material Radio</h3>
+            <button onclick="closeMusicPanel()" class="w-9 h-9 flex items-center justify-center bg-gray-100 rounded-full text-gray-500 font-bold">✕</button>
+        </div>
+        <div class="flex gap-2 mb-4">
+            <input type="text" id="yt-url" placeholder="Incolla link YouTube..." class="flex-1 bg-gray-100 border-none rounded-xl px-4 py-2 text-sm outline-none">
+            <button onclick="loadVideo()" class="bg-purple-600 text-white px-4 py-2 rounded-xl font-bold text-xs">CARICA</button>
+        </div>
+        <div class="aspect-video w-full bg-black rounded-2xl overflow-hidden">
+            <div id="player"></div>
         </div>
     </div>
 
-    <!-- SCHERMATA DI GIOCO -->
+    <!-- Schermata Menu Principale -->
+    <div id="menu-screen" class="screen">
+        <div class="text-center">
+            <h1 id="wave-title" class="wave-text text-7xl md:text-8xl font-black tracking-tighter text-[#6750A4] mb-1"></h1>
+            <h1 class="text-7xl md:text-8xl font-black tracking-tighter text-[#6750A4] opacity-10">Connect</h1>
+        </div>
+        <div class="text-center">
+            <div class="bg-[#E8DEF8] px-5 py-1.5 rounded-full text-[10px] font-bold text-[#49454F] mb-3 uppercase tracking-widest">Record Personale</div>
+            <div id="best-score-val" class="text-6xl md:text-7xl font-black text-[#1D1B20]">0</div>
+        </div>
+        <button onclick="goToGame()" class="md-button">GIOCA</button>
+    </div>
+
+    <!-- Schermata di Gioco -->
     <div id="game-screen" class="screen hidden">
-        <div class="w-full flex flex-col items-center mt-2">
-            <div class="text-[10px] font-bold uppercase tracking-widest opacity-30">Punteggio</div>
+        <div class="w-full flex flex-col items-center">
+            <div class="text-xs font-bold uppercase tracking-[0.2em] opacity-30">Punteggio</div>
             <div id="score">0</div>
         </div>
         
-        <div class="game-card-wrapper">
-            <div class="game-card" id="card-body">
-                <canvas id="connection-canvas"></canvas>
-                <div class="grid-container" id="game-grid"></div>
+        <div class="game-card">
+            <!-- Il canvas per disegnare le linee di connessione -->
+            <canvas id="connection-canvas"></canvas>
+            <div class="grid-container" id="game-grid">
+                <!-- La griglia viene generata dinamicamente da script.js -->
             </div>
         </div>
 
-        <div class="mb-6">
-            <button onclick="goToMenu()" class="text-[#6750A4] font-bold opacity-40 hover:opacity-100 transition-opacity">MENU PRINCIPALE</button>
-        </div>
+        <button onclick="goToMenu()" class="text-[#6750A4] font-bold opacity-30 uppercase tracking-widest text-xs hover:opacity-100 transition-opacity">INDIETRO</button>
     </div>
 
-    <!-- OVERLAY GAME OVER -->
-    <div id="game-over-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-md hidden items-center justify-center z-50 p-6">
-        <div class="bg-white rounded-[40px] p-8 w-full max-w-sm text-center shadow-2xl">
-            <div id="trophy-icon" class="text-6xl mb-4">🏆</div>
-            <h2 id="game-over-title" class="text-2xl font-black mb-1">Fine Partita</h2>
-            <p class="text-gray-500 mb-8" id="final-score-text"></p>
-            <button onclick="resetGame()" class="md-button w-full mb-3">RIPROVA</button>
-            <button onclick="goToMenu()" class="text-gray-400 font-bold py-2">CHIUDI</button>
-        </div>
-    </div>
-
-    <script>
-        const GRID_SIZE = 5;
-        const gridElement = document.getElementById('game-grid');
-        const scoreElement = document.getElementById('score');
-        const bestScoreDisplay = document.getElementById('best-score-val');
-        const canvas = document.getElementById('connection-canvas');
-        
-        let grid = [];
-        let score = 0;
-        let bestScore = parseInt(localStorage.getItem('materialConnectBest')) || 0;
-        let selectedPath = [];
-        let isDragging = false;
-
-        bestScoreDisplay.innerText = bestScore;
-
-        function createWaveTitle() {
-            const titleContainer = document.getElementById('wave-title');
-            const text = "Material";
-            titleContainer.innerHTML = "";
-            text.split("").forEach((char, i) => {
-                const span = document.createElement("span");
-                span.innerText = char;
-                span.style.animationDelay = `${i * 0.1}s`;
-                titleContainer.appendChild(span);
-            });
-        }
-
-        function updateBestScore() {
-            if (score > bestScore) {
-                bestScore = score;
-                localStorage.setItem('materialConnectBest', bestScore);
-                bestScoreDisplay.innerText = bestScore;
-                return true;
-            }
-            return false;
-        }
-
-        function goToGame() {
-            document.getElementById('menu-screen').classList.add('hidden');
-            document.getElementById('game-screen').classList.remove('hidden');
-            resetGame();
-        }
-
-        function goToMenu() {
-            document.getElementById('game-screen').classList.add('hidden');
-            document.getElementById('menu-screen').classList.remove('hidden');
-            document.getElementById('game-over-overlay').style.display = 'none';
-        }
-
-        function initGrid() {
-            gridElement.innerHTML = '';
-            grid = [];
-            for (let i = 0; i < GRID_SIZE * GRID_SIZE; i++) {
-                const value = Math.pow(2, Math.floor(Math.random() * 3) + 1);
-                grid.push(value);
-                const cell = document.createElement('div');
-                cell.className = `cell val-${value}`;
-                cell.dataset.index = i;
-                cell.innerText = value;
-                
-                // Mouse
-                cell.addEventListener('mousedown', startSelection);
-                cell.addEventListener('mouseenter', handleMove);
-                
-                // Touch
-                cell.addEventListener('touchstart', (e) => { 
-                    e.preventDefault(); 
-                    startSelection(e); 
-                }, {passive: false});
-                cell.addEventListener('touchmove', handleTouchMove, {passive: false});
-                
-                gridElement.appendChild(cell);
-            }
-            setTimeout(updateCanvasSize, 150);
-        }
-
-        function updateCanvasSize() {
-            const card = document.getElementById('card-body');
-            const rect = gridElement.getBoundingClientRect();
-            canvas.width = rect.width;
-            canvas.height = rect.height;
-        }
-
-        function getPointFromEvent(e) {
-            if (e.touches && e.touches.length > 0) {
-                return { x: e.touches[0].clientX, y: e.touches[0].clientY };
-            }
-            return { x: e.clientX, y: e.clientY };
-        }
-
-        function startSelection(e) {
-            isDragging = true;
-            const pt = getPointFromEvent(e);
-            const target = document.elementFromPoint(pt.x, pt.y);
-            const index = parseInt(target?.dataset?.index);
-            if (!isNaN(index)) addToPath(index);
-        }
-
-        function handleTouchMove(e) {
-            if (!isDragging) return;
-            const pt = getPointFromEvent(e);
-            const target = document.elementFromPoint(pt.x, pt.y);
-            if (target && target.classList.contains('cell')) {
-                handleMove({ target: target });
-            }
-        }
-
-        function handleMove(e) {
-            if (!isDragging) return;
-            const index = parseInt(e.target.dataset.index);
-            if (isNaN(index)) return;
-            
-            const lastIndex = selectedPath[selectedPath.length - 1];
-            if (index === lastIndex) return;
-
-            // Undo path
-            if (selectedPath.length > 1 && index === selectedPath[selectedPath.length - 2]) {
-                const removed = selectedPath.pop();
-                document.querySelector(`[data-index="${removed}"]`).classList.remove('selected');
-                drawLines();
-                return;
-            }
-
-            // Valid connection
-            if (grid[index] === grid[lastIndex] && isAdjacent(index, lastIndex) && !selectedPath.includes(index)) {
-                addToPath(index);
-                if (window.navigator.vibrate) window.navigator.vibrate(10);
-            }
-        }
-
-        function isAdjacent(idx1, idx2) {
-            const x1 = idx1 % GRID_SIZE, y1 = Math.floor(idx1 / GRID_SIZE);
-            const x2 = idx2 % GRID_SIZE, y2 = Math.floor(idx2 / GRID_SIZE);
-            return Math.abs(x1 - x2) <= 1 && Math.abs(y1 - y2) <= 1;
-        }
-
-        function addToPath(index) {
-            selectedPath.push(index);
-            document.querySelector(`[data-index="${index}"]`).classList.add('selected');
-            drawLines();
-        }
-
-        function drawLines() {
-            const ctx = canvas.getContext('2d');
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            if (selectedPath.length < 2) return;
-            
-            const baseColor = getComputedStyle(document.querySelector(`[data-index="${selectedPath[0]}"]`)).backgroundColor;
-            ctx.beginPath();
-            ctx.lineWidth = 12;
-            ctx.lineCap = 'round';
-            ctx.lineJoin = 'round';
-            ctx.strokeStyle = baseColor;
-            ctx.globalAlpha = 0.5;
-            
-            const gridRect = gridElement.getBoundingClientRect();
-            
-            selectedPath.forEach((idx, i) => {
-                const cell = document.querySelector(`[data-index="${idx}"]`);
-                const rect = cell.getBoundingClientRect();
-                const x = rect.left - gridRect.left + rect.width / 2;
-                const y = rect.top - gridRect.top + rect.height / 2;
-                if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-            });
-            ctx.stroke();
-        }
-
-        function endSelection() {
-            if (!isDragging) return;
-            isDragging = false;
-            if (selectedPath.length >= 2) processSelection();
-            selectedPath.forEach(idx => {
-                const cell = document.querySelector(`[data-index="${idx}"]`);
-                if (cell) cell.classList.remove('selected');
-            });
-            selectedPath = [];
-            canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
-        }
-
-        function processSelection() {
-            const baseValue = grid[selectedPath[0]];
-            const totalValue = baseValue * selectedPath.length;
-            let newValue = 2;
-            while (newValue < totalValue) newValue *= 2;
-            
-            score += totalValue;
-            scoreElement.innerText = score;
-            updateBestScore();
-
-            selectedPath.forEach((idx, i) => {
-                grid[idx] = (i === selectedPath.length - 1) ? newValue : null;
-            });
-            applyGravity();
-            updateGridDisplay();
-            if (checkGameOver()) showGameOver();
-        }
-
-        function applyGravity() {
-            for (let x = 0; x < GRID_SIZE; x++) {
-                let column = [];
-                for (let y = 0; y < GRID_SIZE; y++) {
-                    const val = grid[y * GRID_SIZE + x];
-                    if (val !== null) column.push(val);
-                }
-                while (column.length < GRID_SIZE) column.unshift(Math.pow(2, Math.floor(Math.random() * 3) + 1));
-                for (let y = 0; y < GRID_SIZE; y++) grid[y * GRID_SIZE + x] = column[y];
-            }
-        }
-
-        function updateGridDisplay() {
-            grid.forEach((value, i) => {
-                const cell = document.querySelector(`[data-index="${i}"]`);
-                cell.innerText = value;
-                cell.className = `cell val-${value}`;
-            });
-        }
-
-        function checkGameOver() {
-            for (let i = 0; i < grid.length; i++) {
-                const x = i % GRID_SIZE, y = Math.floor(i / GRID_SIZE);
-                const check = [[x + 1, y], [x, y + 1], [x + 1, y + 1], [x - 1, y + 1]];
-                for (let [nx, ny] of check) {
-                    if (nx >= 0 && nx < GRID_SIZE && ny >= 0 && ny < GRID_SIZE) {
-                        if (grid[i] === grid[ny * GRID_SIZE + nx]) return false;
-                    }
-                }
-            }
-            return true;
-        }
-
-        function showGameOver() {
-            const isNewRecord = updateBestScore();
-            document.getElementById('game-over-title').innerText = isNewRecord ? "Nuovo Record!" : "Fine Partita";
-            document.getElementById('trophy-icon').innerText = isNewRecord ? "⭐" : "🏆";
-            document.getElementById('final-score-text').innerText = `Hai totalizzato ${score} punti!`;
-            document.getElementById('game-over-overlay').style.display = 'flex';
-        }
-
-        function resetGame() {
-            score = 0;
-            scoreElement.innerText = score;
-            document.getElementById('game-over-overlay').style.display = 'none';
-            initGrid();
-        }
-
-        window.addEventListener('mouseup', endSelection);
-        window.addEventListener('touchend', endSelection);
-        window.addEventListener('resize', () => {
-            updateCanvasSize();
-            drawLines();
-        });
-        
-        window.onload = () => {
-            createWaveTitle();
-            initGrid();
-        };
-    </script>
+    <!-- Script Esterni -->
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script type="module" src="script.js"></script>
 </body>
 </html>
-
